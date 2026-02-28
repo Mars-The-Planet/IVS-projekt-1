@@ -3,7 +3,7 @@
 // Purpose:     Red-Black Tree - public interface tests
 //
 // $NoKeywords: $ivs_project_1 $black_box_tests.cpp
-// $Author:     JMENO PRIJMENI <xlogin00@stud.fit.vutbr.cz>
+// $Author:     MATĚJ RŮŽIČKA <xruzicm00@stud.fit.vutbr.cz>
 // $Date:       $2025-02-19
 //============================================================================//
 /**
@@ -32,5 +32,14 @@
 //    - Vsechny cesty od kazdeho listoveho uzlu ke koreni stromu obsahuji
 //      *STEJNY* pocet cernych uzlu.
 //============================================================================//
+
+class EmptyTree : public ::testing::Test {
+    protected:
+        BinaryTree red_black_tree;
+};
+
+TEST_F(EmptyTree, InsertNode) {
+    ASSERT_EQ(1, 1);
+}
 
 /*** Konec souboru black_box_tests.cpp ***/
