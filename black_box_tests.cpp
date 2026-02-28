@@ -8,7 +8,7 @@
 //============================================================================//
 /**
  * @file black_box_tests.cpp
- * @author JMENO PRIJMENI
+ * @author MATĚJ RŮŽIČKA
  * 
  * @brief Implementace testu binarniho stromu.
  */
@@ -35,11 +35,45 @@
 
 class EmptyTree : public ::testing::Test {
     protected:
-        BinaryTree red_black_tree;
+        BinaryTree empty_tree;
 };
 
 TEST_F(EmptyTree, InsertNode) {
-    ASSERT_EQ(1, 1);
+    int key = 77;
+    std::pair<bool, Node_t *> pair = empty_tree.InsertNode(key);
+
+    ASSERT_TRUE(pair.first);
+
+    Node_t *root = empty_tree.GetRoot();
+
+    ASSERT_TRUE(root != nullptr);
+    ASSERT_EQ(root, pair.second);
+    ASSERT_EQ(root->key, key);
+}
+
+TEST_F(EmptyTree, DeleteNode) {
+    ASSERT_FALSE(empty_tree.DeleteNode(24));
+}
+
+TEST_F(EmptyTree, FindNode) {
+    ASSERT_EQ(empty_tree.FindNode(2), nullptr);
+}
+
+
+class NonEmptyTree : public ::testing::Test {
+    protected:
+        BinaryTree non_empty_tree;
+
+    virtual void SetUp() {
+        for (int i = 0; i < 10; i++) {
+            non_empty_tree.InsertNode(i);
+        }
+        
+    }
+};
+
+TEST_F(NonEmptyTree, InsertNode) {
+    
 }
 
 /*** Konec souboru black_box_tests.cpp ***/

@@ -1,0 +1,6 @@
+cmake ..
+make
+ctest -C Debug
+    ./black_box_test
+    ./white_box_test
+    ./tdd_test
