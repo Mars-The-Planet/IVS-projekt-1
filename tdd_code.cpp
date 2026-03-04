@@ -20,7 +20,9 @@
 
 Graph::Graph(){}
 
-Graph::~Graph(){}
+Graph::~Graph(){
+    clear();
+}
 
 std::vector<Node*> Graph::nodes() {
     std::vector<Node*> nodes;
@@ -55,6 +57,7 @@ Node* Graph::addNode(size_t nodeId) {
     Node* node = new Node();
     node->id = nodeId;
     node->color = 0;
+    node->colored = false;
 
     map_nodes[nodeId] = node;
     neighbors[nodeId] = std::vector<size_t>{};
@@ -177,6 +180,8 @@ void Graph::coloring(){
     for (const auto& pair : map_nodes) {
         pair.second->color = 0;
     }
+
+    
 }
 
 void Graph::clear() {
