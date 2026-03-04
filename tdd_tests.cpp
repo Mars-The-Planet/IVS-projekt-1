@@ -178,8 +178,7 @@ TEST_F(NonEmptyGraph, removeNode){
 }
 
 TEST_F(NonEmptyGraph, removeEdge){
-    graph.remove
-    Edge(Edge(1, 4));
+    graph.removeEdge(Edge(1, 4));
     auto edges = graph.edges();
     EXPECT_THAT(edges, UnorderedElementsAre(Eq(Edge(1, 5)), Eq(Edge(4, 6)), Eq(Edge(5, 6)), Eq(Edge(5, 7)),
                                             Eq(Edge(7, 6))));

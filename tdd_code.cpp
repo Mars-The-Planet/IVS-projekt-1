@@ -37,8 +37,12 @@ std::vector<Edge> Graph::edges() const{
 
     for (const auto& pair : neighbors) {
         for (size_t y : pair.second) {
-            printf("node: %lu, %lu \n", pair.first, y);
-            edges.push_back({pair.first, y});
+            Edge edge = {pair.first, y};
+            Edge edge_twist = {y, pair.first};
+            
+            if (std::find(edges.begin(), edges.end(), edge_twist) == edges.end()) {
+                edges.push_back(edge);
+            }
         }
     }
 
@@ -46,7 +50,7 @@ std::vector<Edge> Graph::edges() const{
 }
 
 Node* Graph::addNode(size_t nodeId) {
-    if (neighbors.count(nodeId)) return nullptr;
+    if (map_nodes.count(nodeId)) return nullptr;
 
     Node* node = new Node();
     node->id = nodeId;
@@ -59,8 +63,8 @@ Node* Graph::addNode(size_t nodeId) {
 }
 
 bool Graph::addEdge(const Edge& edge){
-    if (map_nodes.find(edge.a) == map_nodes.end() || 
-        map_nodes.find(edge.b) == map_nodes.end()) {
+    if (!map_nodes.count(edge.b) || !map_nodes.count(edge.b)) {
+        printf("KONEC 1\n");
         return false; 
     }
 
@@ -69,8 +73,11 @@ bool Graph::addEdge(const Edge& edge){
 
     if (edge.a == edge.b ||
         std::count(a_edges.begin(), a_edges.end(), edge.b) ||
-        std::count(b_edges.begin(), b_edges.end(), edge.a)) 
-        return false;
+        std::count(b_edges.begin(), b_edges.end(), edge.a)) {
+            printf("KONEC 2\n");
+            return false;
+    }
+        
 
     a_edges.push_back(edge.b);
     b_edges.push_back(edge.a);
@@ -78,6 +85,7 @@ bool Graph::addEdge(const Edge& edge){
     neighbors[edge.a] = a_edges;
     neighbors[edge.b] = b_edges;
 
+    printf("KONEC 3\n");
     return true;
 }
 
@@ -90,16 +98,14 @@ void Graph::addMultipleEdges(const std::vector<Edge>& edges) {
 }
 
 Node* Graph::getNode(size_t nodeId){
-    std::map<size_t, Node*>::iterator it = map_nodes.find(nodeId);
-
-    if (it == map_nodes.end()) 
+    if (!map_nodes.count(nodeId)) 
         return nullptr;
 
     return map_nodes.at(nodeId);
 }
 
 bool Graph::containsEdge(const Edge& edge) const{
-    if (neighbors.find(edge.a) == neighbors.end())
+    if (!map_nodes.count(edge.a) || !map_nodes.count(edge.b))
         return false;
     
     std::vector<size_t> a_neighbors = neighbors.at(edge.a);
@@ -110,8 +116,8 @@ bool Graph::containsEdge(const Edge& edge) const{
 }
 
 void Graph::removeNode(size_t nodeId){
-    if (map_nodes.find(nodeId) == map_nodes.end())
-        return;
+    if (!map_nodes.count(nodeId))
+        throw std::out_of_range("Node does not exist\n");
 
     free(map_nodes.at(nodeId));
 
@@ -120,8 +126,8 @@ void Graph::removeNode(size_t nodeId){
 }
 
 void Graph::removeEdge(const Edge& edge){
-    if (map_nodes.find(edge.a) == map_nodes.end())
-        return;
+    if (map_nodes.count(edge.a))
+        throw std::out_of_range("Edge does not exist\n");
     
     std::vector<size_t> a_neighbors = neighbors.at(edge.a);
     std::vector<size_t> b_neighbors = neighbors.at(edge.b);
@@ -137,19 +143,29 @@ void Graph::removeEdge(const Edge& edge){
 }
 
 size_t Graph::nodeCount() const{
-    return 42;
+    return map_nodes.size();
 }
 
 size_t Graph::edgeCount() const{
-    return 42;
+    return edges().size();
 }
 
 size_t Graph::nodeDegree(size_t nodeId) const{
-    return 42;
+    if (neighbors.find(nodeId) == neighbors.end())
+        throw std::out_of_range("Node does not exist\n");
+
+    std::vector<size_t> edges = neighbors.at(nodeId);
+    return edges.size();
 }
 
 size_t Graph::graphDegree() const{
-    return 42;
+    size_t max_degree = 0;
+    for (const auto& pair : neighbors) {
+        if (pair.second.size() > max_degree)
+            max_degree = pair.second.size();
+    }
+
+    return max_degree;
 }
 
 void Graph::coloring(){
