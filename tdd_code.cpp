@@ -63,10 +63,8 @@ Node* Graph::addNode(size_t nodeId) {
 }
 
 bool Graph::addEdge(const Edge& edge){
-    if (!map_nodes.count(edge.b) || !map_nodes.count(edge.b)) {
-        printf("KONEC 1\n");
-        return false; 
-    }
+    addNode(edge.a);
+    addNode(edge.b);
 
     std::vector<size_t> a_edges = neighbors.at(edge.a);
     std::vector<size_t> b_edges = neighbors.at(edge.b);
@@ -74,25 +72,20 @@ bool Graph::addEdge(const Edge& edge){
     if (edge.a == edge.b ||
         std::count(a_edges.begin(), a_edges.end(), edge.b) ||
         std::count(b_edges.begin(), b_edges.end(), edge.a)) {
-            printf("KONEC 2\n");
             return false;
     }
         
-
     a_edges.push_back(edge.b);
     b_edges.push_back(edge.a);
 
     neighbors[edge.a] = a_edges;
     neighbors[edge.b] = b_edges;
 
-    printf("KONEC 3\n");
     return true;
 }
 
 void Graph::addMultipleEdges(const std::vector<Edge>& edges) {
     for (Edge edge : edges) {
-        addNode(edge.a);
-        addNode(edge.b);
         addEdge(edge);
     }
 }
@@ -119,24 +112,36 @@ void Graph::removeNode(size_t nodeId){
     if (!map_nodes.count(nodeId))
         throw std::out_of_range("Node does not exist\n");
 
-    free(map_nodes.at(nodeId));
+    for (auto& pair : neighbors) {
+        auto& nodes = pair.second; 
+        auto it = std::find(nodes.begin(), nodes.end(), nodeId);
+        
+        if (it != nodes.end()) {
+            nodes.erase(it); 
+        }
+    }
+
+    delete map_nodes.at(nodeId);
 
     map_nodes.erase(nodeId);
     neighbors.erase(nodeId);
 }
 
 void Graph::removeEdge(const Edge& edge){
-    if (map_nodes.count(edge.a))
+    if (!map_nodes.count(edge.a) || !map_nodes.count(edge.b))
         throw std::out_of_range("Edge does not exist\n");
     
     std::vector<size_t> a_neighbors = neighbors.at(edge.a);
     std::vector<size_t> b_neighbors = neighbors.at(edge.b);
 
     auto ia = std::find(a_neighbors.begin(), a_neighbors.end(), edge.b);
-    a_neighbors.erase(ia);
+    auto ib = std::find(b_neighbors.begin(), b_neighbors.end(), edge.a);
 
-    auto ib = std::find(a_neighbors.begin(), a_neighbors.end(), edge.b);
-    a_neighbors.erase(ib);
+    if (ia == a_neighbors.end() || ib == b_neighbors.end())
+        throw std::out_of_range("Edge does not exist\n");
+
+    a_neighbors.erase(ia);
+    b_neighbors.erase(ib);
 
     neighbors.at(edge.a) = a_neighbors;
     neighbors.at(edge.b) = b_neighbors;
@@ -175,8 +180,13 @@ void Graph::coloring(){
 }
 
 void Graph::clear() {
+    neighbors.clear();
 
-
+    for (const auto& pair : map_nodes) {
+        delete pair.second;
+    }
+    
+    map_nodes.clear();
 }
 
 /*** Konec souboru tdd_code.cpp ***/
