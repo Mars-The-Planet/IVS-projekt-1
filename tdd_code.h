@@ -23,6 +23,7 @@
 #include <iostream>
 
 // Místo pro Vaše případné includy, používejte pouze standardní knihovnu tak, aby nebylo nutno upravovat CMake.
+#include <map>
 
 /**
  * @brief reprezentace uzlu
@@ -203,7 +204,8 @@ public:
     void clear();
 
 protected:
-    // doplňte vhodné struktury
+    std::map<size_t, std::vector<size_t>> neighbors;
+    std::map<size_t, Node*> map_nodes;
 
 };
 

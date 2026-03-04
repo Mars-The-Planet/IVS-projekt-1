@@ -3,12 +3,12 @@
 // Purpose:     White Box - test suite
 //
 // $NoKeywords: $ivs_project_1 $white_box_tests.cpp
-// $Author:     JMENO PRIJMENI <xlogin00@stud.fit.vutbr.cz>
+// $Author:     MATĚJ RŮŽIČKA <xruzicm00@stud.fit.vutbr.cz>
 // $Date:       $2025-02-19
 //============================================================================//
 /**
  * @file white_box_tests.cpp
- * @author JMENO PRIJMENI
+ * @author MATĚJ RŮŽIČKA
  * 
  * @brief Implementace testu hasovaci tabulky.
  */
@@ -31,5 +31,10 @@
 //     - Otestujte chovani pri kolizich hashu namapovane na stejne misto v 
 //       indexu
 //============================================================================//
+
+class EmptyMap : public ::testing::Test {
+    protected:
+        SuffixAutomaton emptyMap;
+};
 
 /*** Konec souboru white_box_tests.cpp ***/

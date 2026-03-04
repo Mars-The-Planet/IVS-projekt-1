@@ -229,5 +229,4 @@ TEST_F(TreeAxioms, Axiom3) {
     }
 }
 
-
 /*** Konec souboru black_box_tests.cpp ***/
