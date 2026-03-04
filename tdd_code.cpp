@@ -26,7 +26,6 @@ std::vector<Node*> Graph::nodes() {
     std::vector<Node*> nodes;
 
     for (const auto& pair : map_nodes) {
-        printf("NODE: %lu, %p, Size:  %lu \n", pair.first, pair.second, map_nodes.size());
         nodes.push_back(pair.second);
     }
 
@@ -38,6 +37,7 @@ std::vector<Edge> Graph::edges() const{
 
     for (const auto& pair : neighbors) {
         for (size_t y : pair.second) {
+            printf("node: %lu, %lu \n", pair.first, y);
             edges.push_back({pair.first, y});
         }
     }
@@ -55,7 +55,6 @@ Node* Graph::addNode(size_t nodeId) {
     map_nodes[nodeId] = node;
     neighbors[nodeId] = std::vector<size_t>{};
 
-    printf("ADD NODE: %lu, %p \n", node->id, node);
     return node;
 }
 
@@ -82,9 +81,10 @@ bool Graph::addEdge(const Edge& edge){
     return true;
 }
 
-// TODO: vytvorit neexistujici hrany
 void Graph::addMultipleEdges(const std::vector<Edge>& edges) {
     for (Edge edge : edges) {
+        addNode(edge.a);
+        addNode(edge.b);
         addEdge(edge);
     }
 }
@@ -99,13 +99,41 @@ Node* Graph::getNode(size_t nodeId){
 }
 
 bool Graph::containsEdge(const Edge& edge) const{
+    if (neighbors.find(edge.a) == neighbors.end())
+        return false;
+    
+    std::vector<size_t> a_neighbors = neighbors.at(edge.a);
+    if (std::count(a_neighbors.begin(), a_neighbors.end(), edge.b)) 
+        return true;
+
     return false;
 }
 
 void Graph::removeNode(size_t nodeId){
+    if (map_nodes.find(nodeId) == map_nodes.end())
+        return;
+
+    free(map_nodes.at(nodeId));
+
+    map_nodes.erase(nodeId);
+    neighbors.erase(nodeId);
 }
 
 void Graph::removeEdge(const Edge& edge){
+    if (map_nodes.find(edge.a) == map_nodes.end())
+        return;
+    
+    std::vector<size_t> a_neighbors = neighbors.at(edge.a);
+    std::vector<size_t> b_neighbors = neighbors.at(edge.b);
+
+    auto ia = std::find(a_neighbors.begin(), a_neighbors.end(), edge.b);
+    a_neighbors.erase(ia);
+
+    auto ib = std::find(a_neighbors.begin(), a_neighbors.end(), edge.b);
+    a_neighbors.erase(ib);
+
+    neighbors.at(edge.a) = a_neighbors;
+    neighbors.at(edge.b) = b_neighbors;
 }
 
 size_t Graph::nodeCount() const{
