@@ -32,7 +32,6 @@ struct Node{
     size_t id;  ///< jednoznačný identifikátor uzlu
     size_t color;  ///< celé číslo reprezentující barvu uzlu, výchozí barva je 0 a značí neobarveno
     // doplňte vhodné struktury, pokud potřebujete
-    bool colored;
 };
 
 /**
@@ -207,7 +206,6 @@ public:
 protected:
     std::map<size_t, std::vector<size_t>> neighbors;
     std::map<size_t, Node*> map_nodes;
-
 };
 
 #endif // TDD_CODE_H_

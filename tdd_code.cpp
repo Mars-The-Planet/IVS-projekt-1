@@ -57,7 +57,6 @@ Node* Graph::addNode(size_t nodeId) {
     Node* node = new Node();
     node->id = nodeId;
     node->color = 0;
-    node->colored = false;
 
     map_nodes[nodeId] = node;
     neighbors[nodeId] = std::vector<size_t>{};
@@ -176,12 +175,55 @@ size_t Graph::graphDegree() const{
     return max_degree;
 }
 
-void Graph::coloring(){
+// hledani uzlu s nejvetsim poctem hran
+size_t maxDegIdUncolored(std::map<size_t, std::vector<size_t>> neighbors, std::map<size_t, Node*> map_nodes) {
+    int max_deg = 0;
+    size_t max_deg_id = 0;
+
     for (const auto& pair : map_nodes) {
-        pair.second->color = 0;
+        if (pair.second->color == 0 && neighbors.at(pair.first).size() > max_deg) {
+            max_deg = neighbors.at(pair.first).size();
+            max_deg_id = pair.first;
+        }
     }
 
+    return max_deg_id;
+}
+
+std::vector<size_t> findColorsUsedByNeighbors(size_t node_id, std::map<size_t, std::vector<size_t>> neighbors, std::map<size_t, Node*> map_nodes) {
+    std::vector<size_t> used_colors;
+
+    for (size_t id : neighbors.at(node_id)) {
+        if (map_nodes.at(id)->color != 0) {
+            used_colors.push_back(map_nodes.at(id)->color);
+        }
+    }
+
+    return used_colors;
+}
+
+size_t findValidColor(size_t max_color, std::vector<size_t> used_colors) {
+    for (size_t i = 1; i <= max_color; i++) {
+        if (std::find(used_colors.begin(), used_colors.end(), i) == used_colors.end()) {
+            return i;
+        }
+    }
+
+    return 0;
+}
+
+void Graph::coloring(){
+    if (map_nodes.empty()) 
+        return;
     
+    size_t max_color = graphDegree() + 1;
+
+    for (size_t i = 0; i < nodeCount(); i++) {
+        size_t id = maxDegIdUncolored(neighbors, map_nodes);
+        std::vector<size_t> used_colors = findColorsUsedByNeighbors(id, neighbors, map_nodes);
+        size_t color = findValidColor(max_color, used_colors);
+        map_nodes.at(id)->color = color;
+    }
 }
 
 void Graph::clear() {
