@@ -175,7 +175,6 @@ size_t Graph::graphDegree() const{
     return max_degree;
 }
 
-// hledani uzlu s nejvetsim poctem hran
 size_t maxDegIdUncolored(std::map<size_t, std::vector<size_t>> neighbors, std::map<size_t, Node*> map_nodes) {
     int max_deg = 0;
     size_t max_deg_id = 0;

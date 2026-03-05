@@ -38,6 +38,16 @@ class EmptyTree : public ::testing::Test {
         BinaryTree emptyTree;
 };
 
+class NonEmptyTree : public ::testing::Test {
+    protected:
+        BinaryTree nonEmptyTree;
+
+    virtual void SetUp() {
+        nonEmptyTree.InsertNode(2);
+        nonEmptyTree.InsertNode(4);
+    }
+};
+
 TEST_F(EmptyTree, InsertNode) {
     int key = 77;
     std::pair<bool, Node_t *> pair = emptyTree.InsertNode(key);
@@ -59,17 +69,6 @@ TEST_F(EmptyTree, DeleteNode) {
 TEST_F(EmptyTree, FindNode) {
     ASSERT_EQ(emptyTree.FindNode(2), nullptr);
 }
-
-
-class NonEmptyTree : public ::testing::Test {
-    protected:
-        BinaryTree nonEmptyTree;
-
-    virtual void SetUp() {
-        nonEmptyTree.InsertNode(2);
-        nonEmptyTree.InsertNode(4);
-    }
-};
 
 TEST_F(NonEmptyTree, InsertNode_Unique) {
     int key = 1;
